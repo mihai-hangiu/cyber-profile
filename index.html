@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>// CyberProfile — Ethical Hacker Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════════
+           CSS VARIABLES & RESET
+           ═══════════════════════════════════════════ */
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #0d1321;
+            --bg-card: #111827;
+            --bg-card-hover: #1a2332;
+            --green-primary: #00ff88;
+            --green-dim: #00cc6a;
+            --green-glow: rgba(0, 255, 136, 0.15);
+            --green-glow-strong: rgba(0, 255, 136, 0.3);
+            --cyan: #00e5ff;
+            --cyan-dim: #00b8d4;
+            --red: #ff3d5a;
+            --orange: #ff9100;
+            --yellow: #ffd600;
+            --text-primary: #e0e6ed;
+            --text-secondary: #8892a4;
+            --text-dim: #4a5568;
+            --border: #1e293b;
+            --border-glow: rgba(0, 255, 136, 0.2);
+            --font-mono: 'Share Tech Mono', monospace;
+            --font-display: 'Orbitron', sans-serif;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* ═══════════════════════════════════════════
+           MATRIX RAIN BACKGROUND
+           ═══════════════════════════════════════════ */
+        #matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.13;
+            pointer-events: none;
+        }
+
+        /* ═══════════════════════════════════════════
+           SCANLINE OVERLAY
+           ═══════════════════════════════════════════ */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.03) 2px,
+                rgba(0, 0, 0, 0.03) 4px
+            );
+        }
+
+        /* ═══════════════════════════════════════════
+           NAVIGATION
+           ═══════════════════════════════════════════ */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(10, 14, 23, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            transition: box-shadow 0.3s;
+        }
+
+        nav.scrolled {
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
+            border-bottom-color: var(--border-glow);
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .nav-logo {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--green-primary);
+            text-decoration: none;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px var(--green-glow-strong);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-logo .bracket {
+            color: var(--text-dim);
+            font-weight: 400;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nav-links a {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::before {
+            content: '>';
+            margin-right: 4px;
+            color: var(--green-primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--green-primary);
+            background: var(--green-glow);
+        }
+
+        .nav-links a:hover::before,
+        .nav-links a.active::before {
+            opacity: 1;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 2px;
+            background: var(--green-primary);
+            transition: all 0.3s;
+        }
+
+        /* ═══════════════════════════════════════════
+           SITE WRAPPER — footer stays at bottom, no overflow
+           ═══════════════════════════════════════════ */
+        .site-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ═══════════════════════════════════════════
+           PAGE SECTIONS
+           ═══════════════════════════════════════════ */
+        .page-section {
+            display: none;
+            position: relative;
+            padding-top: 64px;
+            flex: 1;
+            /* Flex column ca hero sa poata folosi flex:1 */
+        }
+
+        .page-section.active {
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* ═══════════════════════════════════════════
+           HERO SECTION (HOME)
+           ═══════════════════════════════════════════ */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .hero-terminal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem 3rem;
+            max-width: 700px;
+            width: 100%;
+            text-align: left;
+            box-shadow: 0 0 60px rgba(0, 255, 136, 0.05), inset 0 0 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .terminal-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red { background: #ff5f57; }
+        .terminal-dot.yellow { background: #ffbd2e; }
+        .terminal-dot.green { background: #28c840; }
+
+        .hero-pre {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .hero-pre .prompt {
+            color: var(--green-primary);
+        }
+
+        .hero-pre .cmd {
+            color: var(--cyan);
+        }
+
+        .hero-pre .output {
+            color: var(--text-primary);
+        }
+
+        .hero-pre .comment {
+            color: var(--text-dim);
+        }
+
+        .hero-pre .highlight {
+            color: var(--green-primary);
+            text-shadow: 0 0 10px var(--green-glow-strong);
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1.1em;
+            background: var(--green-primary);
+            vertical-align: text-bottom;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .hero-subtitle {
+            font-family: var(--font-mono);
+            color: var(--text-dim);
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .hero-cta {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            padding: 0.75rem 1.5rem;
+            border: 1px solid var(--green-primary);
+            background: transparent;
+            color: var(--green-primary);
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background: var(--green-primary);
+            color: var(--bg-primary);
+            box-shadow: 0 0 25px var(--green-glow-strong);
+        }
+
+        .btn.btn-ghost {
+            border-color: var(--border);
+            color: var(--text-secondary);
+        }
+
+        .btn.btn-ghost:hover {
+            border-color: var(--cyan);
+            color: var(--cyan);
+            background: rgba(0, 229, 255, 0.05);
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.15);
+        }
+
+        /* ═══════════════════════════════════════════
+           SECTION HEADERS
+           ═══════════════════════════════════════════ */
+        .section-header {
+            margin: 3rem 0 2rem;
+            position: relative;
+        }
+
+        .section-header h2 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--text-primary);
+        }
+
+        .section-header h2 span {
+            color: var(--green-primary);
+            text-shadow: 0 0 20px var(--green-glow-strong);
+        }
+
+        .section-header .line {
+            display: block;
+            margin-top: 0.75rem;
+            height: 2px;
+            width: 80px;
+            background: linear-gradient(90deg, var(--green-primary), transparent);
+        }
+
+        .section-header p {
+            font-family: var(--font-mono);
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        /* ═══════════════════════════════════════════
+           COMPETITIONS TABLE
+           ═══════════════════════════════════════════ */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: var(--border-glow);
+            box-shadow: 0 0 20px var(--green-glow);
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--green-primary);
+            text-shadow: 0 0 15px var(--green-glow-strong);
+        }
+
+        .stat-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 0.25rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Filter buttons */
+        .filter-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.4rem 1rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            border-color: var(--green-primary);
+            color: var(--green-primary);
+            background: var(--green-glow);
+        }
+
+        /* Competition cards */
+        .competitions-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .comp-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 1.5rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .comp-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--green-dim);
+            transition: all 0.3s;
+        }
+
+        .comp-card:hover {
+            border-color: var(--border-glow);
+            background: var(--bg-card-hover);
+            transform: translateX(4px);
+        }
+
+        .comp-card:hover::before {
+            width: 4px;
+            background: var(--green-primary);
+            box-shadow: 0 0 15px var(--green-glow-strong);
+        }
+
+        .comp-card.gold::before { background: #ffd600; }
+        .comp-card.silver::before { background: #b0bec5; }
+        .comp-card.bronze::before { background: #ff9100; }
+
+        .comp-rank {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 900;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .comp-rank.gold { color: #ffd600; text-shadow: 0 0 15px rgba(255, 214, 0, 0.3); }
+        .comp-rank.silver { color: #b0bec5; text-shadow: 0 0 15px rgba(176, 190, 197, 0.3); }
+        .comp-rank.bronze { color: #ff9100; text-shadow: 0 0 15px rgba(255, 145, 0, 0.3); }
+        .comp-rank.other { color: var(--cyan); }
+
+        .comp-info h3 {
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .comp-info .organizer {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .comp-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.5rem;
+        }
+
+        .comp-category {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .cat-web { background: rgba(0, 229, 255, 0.1); color: var(--cyan); border: 1px solid rgba(0, 229, 255, 0.2); }
+        .cat-forensics { background: rgba(255, 214, 0, 0.1); color: var(--yellow); border: 1px solid rgba(255, 214, 0, 0.2); }
+        .cat-crypto { background: rgba(255, 61, 90, 0.1); color: var(--red); border: 1px solid rgba(255, 61, 90, 0.2); }
+        .cat-reverse { background: rgba(255, 145, 0, 0.1); color: var(--orange); border: 1px solid rgba(255, 145, 0, 0.2); }
+        .cat-pwn { background: rgba(0, 255, 136, 0.1); color: var(--green-primary); border: 1px solid rgba(0, 255, 136, 0.2); }
+        .cat-general { background: rgba(136, 146, 164, 0.1); color: var(--text-secondary); border: 1px solid rgba(136, 146, 164, 0.2); }
+        .cat-misc { background: rgba(180, 130, 255, 0.1); color: #b482ff; border: 1px solid rgba(180, 130, 255, 0.2); }
+
+        .comp-year {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        .comp-participants {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--text-dim);
+        }
+
+        .comp-participants span {
+            color: var(--cyan);
+        }
+
+        .comp-date {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--text-dim);
+        }
+
+        /* ═══════════════════════════════════════════
+           PROFILE PAGE
+           ═══════════════════════════════════════════ */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .profile-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .profile-avatar-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .avatar-ring {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            padding: 4px;
+            background: conic-gradient(var(--green-primary), var(--cyan), var(--green-primary));
+            animation: rotate-ring 6s linear infinite;
+        }
+
+        @keyframes rotate-ring {
+            to { transform: rotate(360deg); }
+        }
+
+        .avatar-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--green-primary);
+            text-shadow: 0 0 20px var(--green-glow-strong);
+        }
+
+        .profile-name {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--text-primary);
+        }
+
+        .profile-handle {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--green-primary);
+            margin-top: 0.25rem;
+        }
+
+        .profile-tagline {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-top: 0.75rem;
+        }
+
+        .profile-links {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            margin-top: 1.25rem;
+        }
+
+        .profile-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .profile-links a:hover {
+            border-color: var(--green-primary);
+            color: var(--green-primary);
+            background: var(--green-glow);
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .info-card h3 {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            color: var(--green-primary);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .skill-tag {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.3rem 0.75rem;
+            margin: 0.25rem;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            transition: all 0.3s;
+        }
+
+        .skill-tag:hover {
+            border-color: var(--green-primary);
+            color: var(--green-primary);
+            background: var(--green-glow);
+        }
+
+        .profile-main {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .about-block {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .about-block h3 {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            color: var(--green-primary);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .about-block p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .about-block p:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--green-primary), var(--border));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            border: 2px solid var(--green-primary);
+            box-shadow: 0 0 10px var(--green-glow);
+            transform: translateX(1px);
+        }
+
+        .timeline-year {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--green-dim);
+            letter-spacing: 1px;
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 0.25rem;
+        }
+
+        .timeline-desc {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-top: 0.25rem;
+        }
+
+        /* ═══════════════════════════════════════════
+           FOOTER
+           ═══════════════════════════════════════════ */
+        footer {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--border);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        footer .green {
+            color: var(--green-primary);
+        }
+
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+           ═══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .hamburger { display: flex; }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 64px;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                background: rgba(10, 14, 23, 0.98);
+                border-bottom: 1px solid var(--border);
+                padding: 1rem;
+            }
+
+            .nav-links.open { display: flex; }
+
+            .hero-terminal { padding: 1.5rem; }
+            .hero-pre { font-size: 0.75rem; }
+
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comp-card {
+                grid-template-columns: auto 1fr;
+                gap: 1rem;
+            }
+
+            .comp-meta {
+                grid-column: 1 / -1;
+                flex-direction: row;
+                align-items: center;
+            }
+
+            .section-header h2 { font-size: 1.3rem; }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* ═══════════════════════════════════════════
+           GLITCH EFFECT
+           ═══════════════════════════════════════════ */
+        .glitch {
+            position: relative;
+        }
+
+        .glitch:hover {
+            animation: glitch-text 0.3s ease;
+        }
+
+        @keyframes glitch-text {
+            0%, 100% { text-shadow: 0 0 20px var(--green-glow-strong); }
+            25% { text-shadow: -2px 0 var(--red), 2px 0 var(--cyan); }
+            50% { text-shadow: 2px 0 var(--red), -2px 0 var(--cyan); }
+            75% { text-shadow: -1px 0 var(--cyan), 1px 0 var(--red); }
+        }
+
+        /* Fade-in animation for cards */
+        .comp-card {
+            opacity: 0;
+            animation: slideIn 0.4s ease forwards;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Matrix Rain Background -->
+    <canvas id="matrix-bg"></canvas>
+    <div class="scanlines"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo glitch" onclick="showPage('home')">
+                <span class="bracket">{</span> CYBER<span style="color:var(--cyan)">_</span>PROFILE <span class="bracket">}</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="#" class="active" data-page="home">home</a>
+                <a href="#" data-page="competitions">competitions</a>
+                <a href="#" data-page="profile">profile</a>
+            </div>
+            <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="site-wrapper">
+
+    <!-- ════════════════════════════════════════════════
+         PAGE: HOME
+         ════════════════════════════════════════════════ -->
+    <section id="page-home" class="page-section active">
+        <div class="hero">
+            <div class="hero-terminal">
+                <div class="terminal-bar">
+                    <div class="terminal-dot red"></div>
+                    <div class="terminal-dot yellow"></div>
+                    <div class="terminal-dot green"></div>
+                </div>
+                <div class="hero-pre">
+                    <span class="comment">#!/usr/bin/env bash</span><br>
+                    <span class="comment"># ── whoami ──────────────────────</span><br><br>
+                    <span class="prompt">root@cyber:~$</span> <span class="cmd">cat /etc/profile</span><br>
+                    <span class="output">
+                        ALIAS="<span class="highlight">HANDLE_AICI</span>"<br>
+                        ROLE="Ethical Hacker &amp; CTF Player"<br>
+                        FOCUS="Web | Forensics | Reverse Engineering"<br>
+                        STATUS="Always learning..."<br>
+                    </span><br>
+                    <span class="prompt">root@cyber:~$</span> <span class="cmd">echo $COMPETITIONS_WON</span><br>
+                    <span class="output"><span class="highlight" id="comp-count-display">0</span></span><br><br>
+                    <span class="prompt">root@cyber:~$</span> <span class="typing-cursor"></span>
+                </div>
+            </div>
+            <p class="hero-subtitle">// CAPTURE THE FLAG • BUG BOUNTY • ETHICAL HACKING</p>
+            <div class="hero-cta">
+                <a href="#" class="btn" onclick="showPage('competitions')">[ VIEW_RESULTS ]</a>
+                <a href="#" class="btn btn-ghost" onclick="showPage('profile')">[ ABOUT_ME ]</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════
+         PAGE: COMPETITIONS
+         ════════════════════════════════════════════════ -->
+    <section id="page-competitions" class="page-section">
+        <div class="container">
+            <div class="section-header">
+                <h2><span>//</span> COMPETITIONS</h2>
+                <span class="line"></span>
+                <p>$ cat /var/log/ctf_results.log</p>
+            </div>
+
+            <!-- Stats overview -->
+            <div class="stats-bar" id="statsBar">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-bar" id="filterBar">
+                <button class="filter-btn active" data-filter="all">ALL</button>
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Competition cards -->
+            <div class="competitions-grid" id="competitionsGrid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════
+         PAGE: PROFILE
+         ════════════════════════════════════════════════ -->
+    <section id="page-profile" class="page-section">
+        <div class="container">
+            <div class="section-header">
+                <h2><span>//</span> PROFILE</h2>
+                <span class="line"></span>
+                <p>$ cat ~/.profile</p>
+            </div>
+
+            <div class="profile-grid">
+                <!-- Sidebar -->
+                <div class="profile-sidebar">
+                    <div class="profile-avatar-card">
+                        <div class="avatar-ring">
+                            <div class="avatar-inner" id="avatarInitials">XX</div>
+                        </div>
+                        <div class="profile-name" id="profileName">Nume Prenume</div>
+                        <div class="profile-handle" id="profileHandle">@handle</div>
+                        <div class="profile-tagline" id="profileTagline">"Hack the planet."</div>
+                        <div class="profile-links" id="profileLinks">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>// Skills</h3>
+                        <div id="skillsContainer">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>// Tools</h3>
+                        <div id="toolsContainer">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main content -->
+                <div class="profile-main">
+                    <div class="about-block">
+                        <h3>// Despre mine</h3>
+                        <div id="aboutContent">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="about-block">
+                        <h3>// Timeline</h3>
+                        <div class="timeline" id="timelineContainer">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <span class="green">&lt;/&gt;</span> Built with passion &amp; caffeine — <span class="green">CYBER_PROFILE</span> &copy; 2025
+    </footer>
+
+    </div><!-- /.site-wrapper -->
+
+    <!-- Datele competitiilor — editeaza fisierul competitions.js -->
+    <script src="competitions.js"></script>
+
+    <!-- ════════════════════════════════════════════════
+         JAVASCRIPT — DATA & LOGIC
+         ════════════════════════════════════════════════ -->
+    <script>
+    /* ═══════════════════════════════════════════════════════════
+       CONFIGURATION — EDITEAZA AICI DATELE TALE
+       Competitiile se incarca din fisierul competitions.js
+       ═══════════════════════════════════════════════════════════ */
+
+    const CONFIG = {
+
+        // ── Profil personal ──────────────────────────
+        profile: {
+            name: "Nume Prenume",           // Numele tau complet
+            handle: "@handle_tau",          // Handle-ul tau de CTF
+            initials: "NP",                 // Initialele (apar in avatar)
+            tagline: "Hack the planet.",    // Motto / tagline
+            links: [
+                // Adauga linkurile tale. Tipuri suportate: github, linkedin, twitter, web, ctftime, email
+                { type: "github",   url: "https://github.com/handle" },
+                { type: "linkedin", url: "https://linkedin.com/in/handle" },
+                { type: "ctftime",  url: "https://ctftime.org/user/12345" },
+                { type: "email",    url: "mailto:email@example.com" },
+            ],
+        },
+
+        // ── Descriere / About ──────────────────────────
+        about: [
+            "Sunt un elev pasionat de cybersecurity si ethical hacking. Am inceput sa explorez acest domeniu in clasa a 9-a, cand am participat la primul meu CTF.",
+            "De atunci am acumulat experienta in web exploitation, forensics, reverse engineering si cryptografie. Imi place sa rezolv provocari complexe si sa invat constant lucruri noi.",
+            "Obiectivul meu este sa devin un profesionist in securitate cibernetica si sa contribui la un internet mai sigur.",
+        ],
+
+        // ── Skills & Tools ──────────────────────────
+        skills: [
+            "Web Exploitation", "Reverse Engineering", "Forensics",
+            "Cryptography", "Binary Exploitation", "OSINT",
+            "Network Analysis", "Steganography",
+        ],
+
+        tools: [
+            "Burp Suite", "Ghidra", "Wireshark", "Nmap",
+            "Python", "Linux", "Metasploit", "John the Ripper",
+            "Volatility", "GDB", "Docker", "CyberChef",
+        ],
+
+        // ── Timeline (parcurs) ──────────────────────────
+        timeline: [
+            { year: "2025", title: "Prima competitie CTF", desc: "Am participat la primul CTF online" },
+            { year: "2025", title: "Top 10 la competitia X", desc: "Am obtinut o pozitie in top 10" },
+            // Adauga alte momente importante...
+        ],
+    };
+
+    // ═════════════════════════════════════════════════════
+    // COMPETITIILE SE INCARCA DIN competitions.js
+    // Editeaza fisierul competitions.js pentru a adauga/modifica competitii
+    // ═════════════════════════════════════════════════════
+
+    // COMPETITIONS_DATA vine din competitions.js (inclus cu <script src>)
+    const COMPETITIONS = (typeof COMPETITIONS_DATA !== 'undefined') ? COMPETITIONS_DATA : [];
+
+
+    /* ═══════════════════════════════════════════════════════════
+       ENGINE — NU TREBUIE SA MODIFICI NIMIC MAI JOS
+       (decat daca vrei sa personalizezi functionalitatea)
+       ═══════════════════════════════════════════════════════════ */
+
+    // Mapare categorii -> label & clasa CSS
+    const CATEGORY_MAP = {
+        web:       { label: "Web",       css: "cat-web" },
+        forensics: { label: "Forensics", css: "cat-forensics" },
+        crypto:    { label: "Crypto",    css: "cat-crypto" },
+        reverse:   { label: "Reverse",   css: "cat-reverse" },
+        pwn:       { label: "Pwn",       css: "cat-pwn" },
+        general:   { label: "General",   css: "cat-general" },
+        misc:      { label: "Misc",      css: "cat-misc" },
+    };
+
+    // Iconite SVG simple pentru linkuri
+    const LINK_ICONS = {
+        github:   '&#9679;',
+        linkedin: '&#9650;',
+        twitter:  '&#9670;',
+        web:      '&#9733;',
+        ctftime:  '&#9658;',
+        email:    '&#9993;',
+    };
+
+    // ── Navigare intre pagini ──
+    function showPage(page) {
+        document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+        document.getElementById('page-' + page).classList.add('active');
+
+        document.querySelectorAll('.nav-links a').forEach(a => {
+            a.classList.toggle('active', a.dataset.page === page);
+        });
+
+        // Inchide meniul mobil
+        document.getElementById('navLinks').classList.remove('open');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Listener navigare
+    document.querySelectorAll('.nav-links a').forEach(a => {
+        a.addEventListener('click', (e) => {
+            e.preventDefault();
+            showPage(a.dataset.page);
+        });
+    });
+
+    function toggleMenu() {
+        document.getElementById('navLinks').classList.toggle('open');
+    }
+
+    // Navbar shadow on scroll
+    window.addEventListener('scroll', () => {
+        document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 10);
+    });
+
+    // ── Formatare data din YYYY-MM-DD in format citibil ──
+    function formatDate(dateStr) {
+        const months = [
+            'Ian', 'Feb', 'Mar', 'Apr', 'Mai', 'Iun',
+            'Iul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ];
+        const parts = dateStr.split('-');
+        const year = parts[0];
+        const month = months[parseInt(parts[1], 10) - 1] || '???';
+        const day = parseInt(parts[2], 10);
+        return `${day} ${month} ${year}`;
+    }
+
+    // ── Render profil ──
+    function renderProfile() {
+        const p = CONFIG.profile;
+        document.getElementById('profileName').textContent = p.name;
+        document.getElementById('profileHandle').textContent = p.handle;
+        document.getElementById('profileTagline').textContent = '"' + p.tagline + '"';
+        document.getElementById('avatarInitials').textContent = p.initials;
+
+        // Linkuri
+        const linksHTML = p.links.map(l =>
+            `<a href="${l.url}" target="_blank" rel="noopener" title="${l.type}">${LINK_ICONS[l.type] || '&#9679;'}</a>`
+        ).join('');
+        document.getElementById('profileLinks').innerHTML = linksHTML;
+
+        // About
+        const aboutHTML = CONFIG.about.map(par => `<p>${par}</p>`).join('');
+        document.getElementById('aboutContent').innerHTML = aboutHTML;
+
+        // Skills
+        const skillsHTML = CONFIG.skills.map(s => `<span class="skill-tag">${s}</span>`).join('');
+        document.getElementById('skillsContainer').innerHTML = skillsHTML;
+
+        // Tools
+        const toolsHTML = CONFIG.tools.map(t => `<span class="skill-tag">${t}</span>`).join('');
+        document.getElementById('toolsContainer').innerHTML = toolsHTML;
+
+        // Timeline
+        const timelineHTML = CONFIG.timeline.map(t => `
+            <div class="timeline-item">
+                <div class="timeline-year">${t.year}</div>
+                <div class="timeline-title">${t.title}</div>
+                <div class="timeline-desc">${t.desc}</div>
+            </div>
+        `).join('');
+        document.getElementById('timelineContainer').innerHTML = timelineHTML;
+    }
+
+    // ── Render competitii (foloseste COMPETITIONS incarcate din JSON) ──
+    function renderCompetitions(filter = 'all') {
+        const comps = COMPETITIONS;
+        const filtered = filter === 'all' ? [...comps] : comps.filter(c => c.category === filter);
+
+        // Sortare: pozitie crescator
+        filtered.sort((a, b) => a.position - b.position);
+
+        // Statistici rapide
+        const totalComps = comps.length;
+        const goldCount = comps.filter(c => c.position === 1).length;
+        const top3Count = comps.filter(c => c.position <= 3).length;
+        const categories = [...new Set(comps.map(c => c.category))].length;
+
+        document.getElementById('statsBar').innerHTML = `
+            <div class="stat-card"><div class="stat-value">${totalComps}</div><div class="stat-label">Competitions</div></div>
+            <div class="stat-card"><div class="stat-value">${goldCount}</div><div class="stat-label">1st Place</div></div>
+            <div class="stat-card"><div class="stat-value">${top3Count}</div><div class="stat-label">Top 3</div></div>
+            <div class="stat-card"><div class="stat-value">${categories}</div><div class="stat-label">Categories</div></div>
+        `;
+
+        // Counter pe home page
+        document.getElementById('comp-count-display').textContent = totalComps;
+
+        // Filtre
+        const allCategories = [...new Set(comps.map(c => c.category))];
+        let filterHTML = `<button class="filter-btn ${filter === 'all' ? 'active' : ''}" data-filter="all">ALL</button>`;
+        allCategories.forEach(cat => {
+            const catInfo = CATEGORY_MAP[cat] || { label: cat, css: 'cat-general' };
+            filterHTML += `<button class="filter-btn ${filter === cat ? 'active' : ''}" data-filter="${cat}">${catInfo.label.toUpperCase()}</button>`;
+        });
+        document.getElementById('filterBar').innerHTML = filterHTML;
+
+        // Re-attach filter listeners
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => renderCompetitions(btn.dataset.filter));
+        });
+
+        // Carduri
+        const grid = document.getElementById('competitionsGrid');
+        if (filtered.length === 0) {
+            grid.innerHTML = `<p style="font-family:var(--font-mono);color:var(--text-dim);text-align:center;padding:3rem;">No results found for this filter.</p>`;
+            return;
+        }
+
+        grid.innerHTML = filtered.map((comp, i) => {
+            const rankClass = comp.position === 1 ? 'gold' : comp.position === 2 ? 'silver' : comp.position === 3 ? 'bronze' : 'other';
+            const catInfo = CATEGORY_MAP[comp.category] || { label: comp.category, css: 'cat-general' };
+
+            return `
+                <div class="comp-card ${rankClass}" style="animation-delay: ${i * 0.06}s">
+                    <div class="comp-rank ${rankClass}">#${comp.position}</div>
+                    <div class="comp-info">
+                        <h3>${comp.name}</h3>
+                        <div class="organizer">// ${comp.organizer}</div>
+                        <div class="comp-participants">Participanti: <span>${comp.totalParticipants.toLocaleString()}</span></div>
+                    </div>
+                    <div class="comp-meta">
+                        <span class="comp-category ${catInfo.css}">${catInfo.label}</span>
+                        <span class="comp-date">${formatDate(comp.date)}</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ── Matrix rain background ──
+    function initMatrix() {
+        const canvas = document.getElementById('matrix-bg');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*{}<>/\\|';
+        const fontSize = 14;
+        const columns = Math.floor(canvas.width / fontSize);
+        // Pozitii initiale random — elimina efectul de coborare sincronizata
+        const drops = Array.from({ length: columns }, () =>
+            Math.floor(Math.random() * (canvas.height / fontSize))
+        );
+
+        function draw() {
+            ctx.fillStyle = 'rgba(10, 14, 23, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00ff88';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(draw, 50);
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    }
+
+    // ── Init ──
+    renderProfile();
+    renderCompetitions();
+    initMatrix();
+    </script>
+</body>
+</html>
