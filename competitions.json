@@ -1,0 +1,68 @@
+[
+    {
+        "name":               "Unbreakable Romania Teams Quals",
+        "date":               "2025-03-15",
+        "duration":           "15-17 Mar 2025",
+        "organizer":          "Bit Sentinel & Orange Romania",
+        "position":           5,
+        "total_participants": 320,
+        "competition_filter": "unr",
+        "is_final":           false,
+        "__comments":         ""
+    },
+    {
+        "name":               "Unbreakable Romania Teams Final",
+        "date":               "2025-03-15",
+        "duration":           "15-17 Mar 2025",
+        "organizer":          "Bit Sentinel & Orange Romania",
+        "position":           7,
+        "total_participants": 320,
+        "competition_filter": "unr",
+        "is_final":           true,
+        "__comments":         "First participation at Unbreakable. 1st in school."
+    },
+    {
+        "name":               "OSCJ",
+        "date":               "2026-04-24",
+        "duration":           "24 Apr 2026",
+        "organizer":          "Ministry of Education and Research, National Cyber ??Security Directorate, Romanian Intelligence Service",
+        "position":           16,
+        "total_participants": 150,
+        "competition_filter": "osc",
+        "is_final":           false,
+        "__comments":         ""
+    },
+    {
+        "name":               "OSCJ Simulation",
+        "date":               "2026-04-17",
+        "duration":           "24 Apr 2026",
+        "organizer":          "Ministry of Education and Research, National Cyber ??Security Directorate, Romanian Intelligence Service",
+        "position":           22,
+        "total_participants": 150,
+        "competition_filter": "osc",
+        "is_final":           false,
+        "__comments":         ""
+    },
+    {
+        "name":               "RoCSC Quals",
+        "date":               "2024-11-05",
+        "duration":           "5-6 Nov 2024",
+        "organizer":          "Romanian Intelligence Service, National Association for Information Systems Security, National Cyber ??Security Directorate",
+        "position":           54,
+        "total_participants": 200,
+        "competition_filter": "rocsc",
+        "is_final":           false,
+        "__comments":         "National selection for Romanian Cyber Security Challenge. Qualified."
+    },
+    {
+        "name":               "UniVsThreats",
+        "date":               "2024-12-08",
+        "duration":           "8-10 Dec 2024",
+        "organizer":          "West University of Timisoara",
+        "position":           14,
+        "total_participants": 1200,
+        "competition_filter": "other",
+        "is_final":           false,
+        "__comments":         "International university-level competition. Participated as a high-school student."
+    }
+]
